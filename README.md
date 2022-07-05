@@ -445,4 +445,61 @@ ON iv."OpportunityId" = iv2."OpportunityId";
 
 ```
 
+**REGIONREF**
+
+This table is used to store the region assignments for each customer. A join created manually within ThoughtSpot links the BillingCountry value in the ACCOUNT view with the COUNTRY value in this table.
+
+```
+CREATE OR REPLACE TABLE REGIONREF (
+	COUNTRY VARCHAR(100),
+	REGION VARCHAR(100)
+);
+```
+
+**USER**
+
+This view selects the subset of fields from the USER table. It also includes a derived field used to calculate employee tenure.
+
+```
+CREATE OR REPLACE VIEW USER
+AS
+SELECT "Id" AS "UserId",
+"Name",
+"Division",,
+"State",
+"Country",
+"ManagerId",
+"CreatedDate",
+(DATEDIFF(day, "CreatedDate", CURRENT_DATE) / 365)::DECIMAL(7,2) AS "Tenure"
+FROM PMMDB.salesforce."USER"
+WHERE "ManagerId" IS NOT NULL;
+```
+
+**USERMANAGER**
+
+This view selects the subset of fields from the USER table for all managers.
+
+```
+CREATE OR REPLACE VIEW USERMANAGER
+AS
+SELECT "Id" AS "UserId",
+"Name",
+"Division",,
+"State",
+"Country",
+"ManagerId"
+FROM PMMDB.salesforce."USER"
+WHERE "ManagerId" IS NULL;
+
+```
+
+
+##Assumptions 
+
+The goal of the Starter Kit is to provide a ThoughtSpot framework for Salesforce data on Snowflake that every customer that owns Salesforce and Snowflake will have in common. It is incumbent upon the resource(s) implementing the Starter Kit to perform whatever changes are required to the Starter Kit in order to make it valuable for the customer or prospect.
+
+The following assumptions were built into the Starter Kit when applying it to (generated) ThoughtSpot Salesforce data. This information should help the resource(s) implementing the Starter Kit understand what may need to be added, subtracted or altered.
+
+
+
 
