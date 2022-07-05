@@ -494,11 +494,72 @@ WHERE "ManagerId" IS NULL;
 ```
 
 
-##Assumptions 
+## Assumptions 
 
 The goal of the Starter Kit is to provide a ThoughtSpot framework for Salesforce data on Snowflake that every customer that owns Salesforce and Snowflake will have in common. It is incumbent upon the resource(s) implementing the Starter Kit to perform whatever changes are required to the Starter Kit in order to make it valuable for the customer or prospect.
 
 The following assumptions were built into the Starter Kit when applying it to (generated) ThoughtSpot Salesforce data. This information should help the resource(s) implementing the Starter Kit understand what may need to be added, subtracted or altered.
+
+| **Assumption** | **Description** |
+| ----------- | ----------- |
+| Custom Fields | Customers are very likely to have a large number of customer Salesforce fields. In fact, many may have more custom fields than “out-of-the-box” fields. The Starter Kit is intended to provide value without having to include any custom fields, but there is nothing preventing adding these fields to the solution so, if the customer wants it, there will likely be no reason to do it. |
+| Regions | Regions may be defined in a custom field in a variety of different locations in the Salesforce data. It could be that users are assigned to specific regions or it could be that accounts are considered to be part of a specific region.
+In the ThoughtSpot implementation, the Billing Country of the account was used to determine the account/opportunity region. The REGIONREF dimension table is used to translate Billing Country into Region. |
+| Stages | In the ThoughtSpot implementation, the m0/m1/s1/s2/s3/s4/s5/s6 stages are used. While there will likely be similarities from customer to customer, there will certainly be some degree of variation. The most significant alteration of syntax in the above DDL will be to address custom stages per customer. |
+
+
+## Embrace Configuration 
+
+1) Enter a name for the connections and select Snowflake and then press the Continue button in the upper-right corner of the page.
+2) Enter the credentials for the Snowflake warehouse and then press the Continue button in the upper-right corner of the page.
+3) Open the TSSF Schema and select every column for all six of the available data objects. After selecting the columns, press the Create Connection button in the upper-right corner of the page.
+4) Confirm that all of the objects have been successfully included in the connection.
+
+## Join Manual 
+
+Foreign Key relationships that are created on tables inside of Snowflake are recognized by ThoughtSpot during the Embrace connection process. Foreign Key relationships can only be created on tables, but not on views. Because we are using views in the ThoughtSpot Starter Kit for Salesforce, we must create the joins manually within ThoughtSpot after we have connected to the data. 
+
+#### Account: 
+
+Join Name: **ACCOUNT - REGIONREF - BILLINGCOUNTRY**
+Destination Table: REGIONREF
+Join Type: Inner Join
+Source Column: BillingCountry
+Destination Column: COUNTRY
+
+
+
+#### OPPORTUNITY:
+
+Join Name: **OPPORTUNITY - ACCOUNT - ACCOUNTID**
+Destination Table: ACCOUNT
+Join Type: Inner join
+Source Column: AccountId
+Destination Column: AccountId
+
+
+Join Name: **OPPORTUNITY - USER - OWNERID**
+Destination Table: USER
+Join Type: Inner Join
+Source Column: OwnerId
+Destination Column: UserId
+
+
+Join Name: **OPPORTUNITY - OPPORTUNITYSTATS - OPPORTUNITYID**
+Destination Table: OPPORTUNITYSTATS
+Join Type: Inner Join
+Source Column: OpportunityId
+Destination Column: OpportunityId 
+
+
+####USER: 
+
+Join Name: **USER - USERMANAGER - MANAGERID**
+Destination Table: USERMANAGER
+Join Type: Inner Join
+Source Column: ManagerId
+Destination Column: UserId
+
 
 
 
