@@ -1,0 +1,415 @@
+guid: d5b645c4-ddfb-445c-92f2-3dae56083105
+worksheet:
+  name: Salesforce (Sales + Meetings)
+  tables:
+  - name: ACCOUNT
+  - name: OPPORTUNITY
+  - name: OPPORTUNITYMEETINGSTATS
+  - name: OPPORTUNITYSTATS
+  - name: REGIONREF
+  - name: USER
+  - name: USERMANAGER
+  - name: USERMEETINGSTATS
+  joins:
+  - name: ACCOUNT - REGIONREF - BILLINGCOUNTRY
+    source: ACCOUNT
+    destination: REGIONREF
+    type: INNER
+    is_one_to_one: false
+  - name: OPPORTUNITY - ACCOUNT - ACCOUNTID
+    source: OPPORTUNITY
+    destination: ACCOUNT
+    type: INNER
+    is_one_to_one: false
+  - name: OPPORTUNITY - USER - OWNERID
+    source: OPPORTUNITY
+    destination: USER
+    type: INNER
+    is_one_to_one: false
+  - name: OPPORTUNITY - OPPORTUNITYSTATS - OPPORTUNITYID
+    source: OPPORTUNITY
+    destination: OPPORTUNITYSTATS
+    type: INNER
+    is_one_to_one: false
+  - name: OPPORTUNITYMEETINGSTATS_to_OPPORTUNITY
+    source: OPPORTUNITYMEETINGSTATS
+    destination: OPPORTUNITY
+    type: INNER
+    is_one_to_one: false
+  - name: USER_to_USERMEETINGSTATS
+    source: USER
+    destination: USERMEETINGSTATS
+    type: INNER
+    is_one_to_one: true
+  - name: USER - USERMANAGER - MANAGERID
+    source: USER
+    destination: USERMANAGER
+    type: INNER
+    is_one_to_one: false
+  table_paths:
+  - id: ACCOUNT_1
+    table: ACCOUNT
+    join_path:
+    - join:
+      - OPPORTUNITYMEETINGSTATS_to_OPPORTUNITY
+      - OPPORTUNITY - ACCOUNT - ACCOUNTID
+  - id: OPPORTUNITY_1
+    table: OPPORTUNITY
+    join_path:
+    - join:
+      - OPPORTUNITYMEETINGSTATS_to_OPPORTUNITY
+  - id: OPPORTUNITYMEETINGSTATS_1
+    table: OPPORTUNITYMEETINGSTATS
+    join_path:
+    - {}
+  - id: OPPORTUNITYSTATS_1
+    table: OPPORTUNITYSTATS
+    join_path:
+    - join:
+      - OPPORTUNITYMEETINGSTATS_to_OPPORTUNITY
+      - OPPORTUNITY - OPPORTUNITYSTATS - OPPORTUNITYID
+  - id: REGIONREF_1
+    table: REGIONREF
+    join_path:
+    - join:
+      - OPPORTUNITYMEETINGSTATS_to_OPPORTUNITY
+      - OPPORTUNITY - ACCOUNT - ACCOUNTID
+      - ACCOUNT - REGIONREF - BILLINGCOUNTRY
+  - id: USER_1
+    table: USER
+    join_path:
+    - join:
+      - OPPORTUNITYMEETINGSTATS_to_OPPORTUNITY
+      - OPPORTUNITY - USER - OWNERID
+  - id: USERMANAGER_1
+    table: USERMANAGER
+    join_path:
+    - join:
+      - OPPORTUNITYMEETINGSTATS_to_OPPORTUNITY
+      - OPPORTUNITY - USER - OWNERID
+      - USER - USERMANAGER - MANAGERID
+  - id: USERMEETINGSTATS_1
+    table: USERMEETINGSTATS
+    join_path:
+    - join:
+      - OPPORTUNITYMEETINGSTATS_to_OPPORTUNITY
+      - OPPORTUNITY - USER - OWNERID
+      - USER_to_USERMEETINGSTATS
+  formulas:
+  - name: Age Range
+    expr: "if ( [Age] <= 14 ) then '0 - 14 days' else if ( [Age] > 14 and [Age] <= 30 ) then '15 - 30 days' else '30+ days'"
+    was_auto_generated: false
+  - name: Age
+    expr: "diff_days ( today ( ) , [OPPORTUNITY_1::CreatedDate] )"
+    was_auto_generated: false
+  - name: Created Date
+    expr: "[OPPORTUNITY_1::CreatedDate]"
+    was_auto_generated: false
+  - name: Late Status
+    expr: "if ( [OPPORTUNITY_1::STATUS] = 'open' and [Days Late] > 0 ) then 'late' else 'not late'"
+    was_auto_generated: false
+  - name: Days Late
+    expr: "diff_days ( today ( ) , [Close Date] )"
+    was_auto_generated: false
+  - name: Close Date
+    expr: "[OPPORTUNITY_1::CloseDate]"
+    was_auto_generated: false
+  - name: Lead Status
+    expr: "if ( substr ( [OPPORTUNITY_1::StageName] , 0 , 1 ) = 's' ) then 'sal' else 'mql'"
+    was_auto_generated: false
+  - name: Logo Status
+    expr: "if ( [OPPORTUNITYSTATS_1::WinOrder] = 1 ) then 'is new logo' else if ( [OPPORTUNITYSTATS_1::WinOrder] = 1 ) then 'was new logo' else 'not new logo'"
+    was_auto_generated: false
+  - name: Meetings Per Day
+    expr: "safe_divide ( sum ( [OPPORTUNITYMEETINGSTATS_1::CNT] ) , sum ( [OPPORTUNITYMEETINGSTATS_1::DAYS] ) )"
+    was_auto_generated: false
+  - name: Number of Accounts
+    expr: "count ( [ACCOUNT_1::AccountId] )"
+    was_auto_generated: false
+  - name: Number of Losses
+    expr: "count_if ( [OPPORTUNITY_1::STATUS] = 'lost' , [OPPORTUNITY_1::OpportunityId] )"
+    was_auto_generated: false
+  - name: Number of Opportunities
+    expr: "unique count ( [OPPORTUNITY_1::OpportunityId] )"
+    was_auto_generated: false
+  - name: Number of Sales Reps
+    expr: "unique count ( [USER_1::UserId] )"
+    was_auto_generated: false
+  - name: Number of Wins
+    expr: "count_if ( [OPPORTUNITY_1::STATUS] = 'booked' , [OPPORTUNITY_1::OpportunityId] )"
+    was_auto_generated: false
+  - name: Opportunity Type
+    expr: "if ( [OPPORTUNITYSTATS_1::WinOrder] = 1 ) then 'new business' else 'expansion'"
+    was_auto_generated: false
+  - name: S2 to S3 Advancement Percentage
+    expr: "safe_divide ( sum ( if ( [OPPORTUNITYSTATS_1::FinalStageBeforeDQ] = 's3 alignment with eb' or [OPPORTUNITYSTATS_1::FinalStageBeforeDQ] = 's4 validation' or [OPPORTUNITYSTATS_1::FinalStageBeforeDQ] = 's5 negotiate' or [OPPORTUNITYSTATS_1::FinalStageBeforeDQ] = 'won' ) then 1 else 0 ) , sum ( if ( [OPPORTUNITYSTATS_1::FinalStageBeforeDQ] = 's3 alignment with eb' or [OPPORTUNITYSTATS_1::FinalStageBeforeDQ] = 's4 validation' or [OPPORTUNITYSTATS_1::FinalStageBeforeDQ] = 's5 negotiate' or [OPPORTUNITYSTATS_1::FinalStageBeforeDQ] = 'won' ) then 1 else 0 ) + sum ( if ( [OPPORTUNITYSTATS_1::FinalStageBeforeDQ] = 's2 scoping success' ) then 1 else 0 ) )"
+    was_auto_generated: false
+  - name: Timespan
+    expr: "diff_days ( [OPPORTUNITY_1::CloseDate] , [OPPORTUNITY_1::CreatedDate] )"
+    was_auto_generated: false
+  - name: Win %
+    expr: "count_if ( [OPPORTUNITY_1::STATUS] = 'booked' , [OPPORTUNITY_1::OpportunityId] ) / count_if ( contains ( [OPPORTUNITY_1::StageName] , 's1' ) or contains ( [OPPORTUNITY_1::StageName] , 's2' ) or contains ( [OPPORTUNITY_1::StageName] , 's3' ) or contains ( [OPPORTUNITY_1::StageName] , 's4' ) or contains ( [OPPORTUNITY_1::StageName] , 's5' ) or contains ( [OPPORTUNITY_1::StageName] , 's6' ) , [OPPORTUNITY_1::OpportunityId] )"
+    was_auto_generated: false
+  - name: Win Percentage
+    expr: "count_if ( [OPPORTUNITY_1::STATUS] = 'booked' , [OPPORTUNITY_1::OpportunityId] ) / count_if ( [OPPORTUNITY_1::STATUS] != 'open' , [OPPORTUNITYSTATS_1::OpportunityId] )"
+    was_auto_generated: false
+  worksheet_columns:
+  - name: Account
+    column_id: ACCOUNT_1::Name
+    properties:
+      column_type: ATTRIBUTE
+  - name: Opportunity
+    column_id: OPPORTUNITY_1::Name
+    properties:
+      column_type: ATTRIBUTE
+  - name: Status
+    column_id: OPPORTUNITY_1::STATUS
+    properties:
+      column_type: ATTRIBUTE
+      synonyms:
+      - Result
+  - name: Sales Rep
+    column_id: USER_1::Name
+    properties:
+      column_type: ATTRIBUTE
+      synonyms:
+      - User
+  - name: Division
+    column_id: USER_1::Division
+    properties:
+      column_type: ATTRIBUTE
+  - name: Stage
+    column_id: OPPORTUNITY_1::StageName
+    properties:
+      column_type: ATTRIBUTE
+  - name: Revenue
+    column_id: OPPORTUNITY_1::ExpectedRevenue
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      synonyms:
+      - Pipeline
+      currency_type:
+        iso_code: USD
+  - name: M0 Duration
+    column_id: OPPORTUNITYSTATS_1::M0_M1
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: M1 Duration
+    column_id: OPPORTUNITYSTATS_1::M1_S1
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: S1 Duration
+    column_id: OPPORTUNITYSTATS_1::S1_S2
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: s2 Duration
+    column_id: OPPORTUNITYSTATS_1::S2_S3
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: S3 Duration
+    column_id: OPPORTUNITYSTATS_1::S3_S4
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: S4 Duration
+    column_id: OPPORTUNITYSTATS_1::S4_S5
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: S5 Duration
+    column_id: OPPORTUNITYSTATS_1::S5_S6
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: Win Duration
+    column_id: OPPORTUNITYSTATS_1::WinTimeSpan
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: Tenure
+    column_id: USER_1::Tenure
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: Department
+    column_id: OPPORTUNITY_1::Department
+    properties:
+      column_type: ATTRIBUTE
+  - name: Use Case
+    column_id: OPPORTUNITY_1::UseCase
+    properties:
+      column_type: ATTRIBUTE
+  - name: Amount
+    column_id: OPPORTUNITYSTATS_1::Amount
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      synonyms:
+      - Deal Size
+      currency_type:
+        iso_code: USD
+  - name: Close Date
+    formula_id: Close Date
+    properties:
+      column_type: ATTRIBUTE
+      index_priority: 10.0
+      calendar: calendar
+  - name: Created Date
+    formula_id: Created Date
+    properties:
+      column_type: ATTRIBUTE
+      calendar: calendar
+  - name: Number of Accounts
+    formula_id: Number of Accounts
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      index_type: DONT_INDEX
+  - name: Number of Opportunities
+    formula_id: Number of Opportunities
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      index_type: DONT_INDEX
+  - name: Timespan
+    formula_id: Timespan
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: Website
+    column_id: ACCOUNT_1::Website
+    properties:
+      column_type: ATTRIBUTE
+  - name: Sector
+    column_id: ACCOUNT_1::Description
+    properties:
+      column_type: ATTRIBUTE
+  - name: Region
+    column_id: REGIONREF_1::REGION
+    properties:
+      column_type: ATTRIBUTE
+  - name: Country
+    column_id: REGIONREF_1::COUNTRY
+    properties:
+      column_type: ATTRIBUTE
+      geo_config:
+        country: true
+  - name: Lead Source
+    column_id: OPPORTUNITY_1::LeadSource
+    properties:
+      column_type: ATTRIBUTE
+  - name: Logo Status
+    formula_id: Logo Status
+    properties:
+      column_type: ATTRIBUTE
+  - name: Number of Sales Reps
+    formula_id: Number of Sales Reps
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      index_type: DONT_INDEX
+  - name: Lead Status
+    formula_id: Lead Status
+    properties:
+      column_type: ATTRIBUTE
+  - name: Manager
+    column_id: USERMANAGER_1::Name
+    properties:
+      column_type: ATTRIBUTE
+      synonyms:
+      - Team
+  - name: Win Percentage
+    formula_id: Win Percentage
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      index_type: DONT_INDEX
+      format_pattern: '###.##%'
+  - name: Number of Wins
+    formula_id: Number of Wins
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      index_type: DONT_INDEX
+  - name: Number of Losses
+    formula_id: Number of Losses
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      index_type: DONT_INDEX
+  - name: Opportunity Type
+    formula_id: Opportunity Type
+    properties:
+      column_type: ATTRIBUTE
+      synonyms:
+      - Deal Type
+  - name: Days Late
+    formula_id: Days Late
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+  - name: Late Status
+    formula_id: Late Status
+    properties:
+      column_type: ATTRIBUTE
+  - name: Final Stage
+    column_id: OPPORTUNITYSTATS_1::FinalStageBeforeDQ
+    properties:
+      column_type: ATTRIBUTE
+  - name: Win %
+    formula_id: Win %
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      index_type: DONT_INDEX
+      format_pattern: '###.##%'
+  - name: Age
+    formula_id: Age
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+  - name: Age Range
+    formula_id: Age Range
+    properties:
+      column_type: ATTRIBUTE
+  - name: S2 to S3 Advancement Percentage
+    formula_id: S2 to S3 Advancement Percentage
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+      format_pattern: '###.##%'
+  - name: Meeting Stage
+    column_id: OPPORTUNITYMEETINGSTATS_1::StageName
+    properties:
+      column_type: ATTRIBUTE
+  - name: Number of Meetings
+    column_id: OPPORTUNITYMEETINGSTATS_1::CNT
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      index_type: DONT_INDEX
+  - name: Overall Meetings Per Day
+    column_id: USERMEETINGSTATS_1::MEETINGSPERDAY
+    properties:
+      column_type: MEASURE
+      aggregation: AVERAGE
+      index_type: DONT_INDEX
+  - name: Days
+    column_id: OPPORTUNITYMEETINGSTATS_1::DAYS
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+  - name: Meetings Per Day
+    formula_id: Meetings Per Day
+    properties:
+      column_type: MEASURE
+      aggregation: SUM
+      index_type: DONT_INDEX
+  properties:
+    is_bypass_rls: false
+    join_progressive: true
