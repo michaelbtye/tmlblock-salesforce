@@ -525,7 +525,7 @@ Join Name: **ACCOUNT - REGIONREF - BILLINGCOUNTRY**
 Destination Table: REGIONREF
 Join Type: Inner Join
 Source Column: BillingCountry
-Destination Column: COUNTRY
+Destination Column: COUNTRY 
 
 <img width="569" alt="Screen Shot 2022-07-05 at 8 58 38 AM" src="https://user-images.githubusercontent.com/102629468/177369671-e0f26612-f14f-47ff-bfc6-276526bbcaae.png">
 
@@ -536,7 +536,8 @@ Join Name: **OPPORTUNITY - ACCOUNT - ACCOUNTID**
 Destination Table: ACCOUNT
 Join Type: Inner join
 Source Column: AccountId
-Destination Column: AccountId
+Destination Column: AccountId 
+
 <img width="563" alt="Screen Shot 2022-07-05 at 8 58 12 AM" src="https://user-images.githubusercontent.com/102629468/177369574-424284a2-416f-4d71-989d-7c655607e4f5.png">
 
 
@@ -545,6 +546,8 @@ Destination Table: USER
 Join Type: Inner Join
 Source Column: OwnerId
 Destination Column: UserId
+
+
 <img width="566" alt="Screen Shot 2022-07-05 at 8 58 18 AM" src="https://user-images.githubusercontent.com/102629468/177369596-03212502-514d-453a-8c09-2df7ba239dcd.png">
 
 
@@ -552,7 +555,8 @@ Join Name: **OPPORTUNITY - OPPORTUNITYSTATS - OPPORTUNITYID**
 Destination Table: OPPORTUNITYSTATS
 Join Type: Inner Join
 Source Column: OpportunityId
-Destination Column: OpportunityId 
+Destination Column: OpportunityId  
+
 <img width="558" alt="Screen Shot 2022-07-05 at 8 58 28 AM" src="https://user-images.githubusercontent.com/102629468/177369607-785dd75a-f3e5-48c2-a398-f9b319b678bc.png">
 
 
