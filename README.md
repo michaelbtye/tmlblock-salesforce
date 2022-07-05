@@ -527,6 +527,7 @@ Join Type: Inner Join
 Source Column: BillingCountry
 Destination Column: COUNTRY
 
+<img width="569" alt="Screen Shot 2022-07-05 at 8 58 38 AM" src="https://user-images.githubusercontent.com/102629468/177369671-e0f26612-f14f-47ff-bfc6-276526bbcaae.png">
 
 
 #### OPPORTUNITY:
@@ -536,6 +537,7 @@ Destination Table: ACCOUNT
 Join Type: Inner join
 Source Column: AccountId
 Destination Column: AccountId
+<img width="563" alt="Screen Shot 2022-07-05 at 8 58 12 AM" src="https://user-images.githubusercontent.com/102629468/177369574-424284a2-416f-4d71-989d-7c655607e4f5.png">
 
 
 Join Name: **OPPORTUNITY - USER - OWNERID**
@@ -543,6 +545,7 @@ Destination Table: USER
 Join Type: Inner Join
 Source Column: OwnerId
 Destination Column: UserId
+<img width="566" alt="Screen Shot 2022-07-05 at 8 58 18 AM" src="https://user-images.githubusercontent.com/102629468/177369596-03212502-514d-453a-8c09-2df7ba239dcd.png">
 
 
 Join Name: **OPPORTUNITY - OPPORTUNITYSTATS - OPPORTUNITYID**
@@ -550,9 +553,10 @@ Destination Table: OPPORTUNITYSTATS
 Join Type: Inner Join
 Source Column: OpportunityId
 Destination Column: OpportunityId 
+<img width="558" alt="Screen Shot 2022-07-05 at 8 58 28 AM" src="https://user-images.githubusercontent.com/102629468/177369607-785dd75a-f3e5-48c2-a398-f9b319b678bc.png">
 
 
-####USER: 
+#### USER: 
 
 Join Name: **USER - USERMANAGER - MANAGERID**
 Destination Table: USERMANAGER
@@ -560,6 +564,32 @@ Join Type: Inner Join
 Source Column: ManagerId
 Destination Column: UserId
 
+<img width="557" alt="Screen Shot 2022-07-05 at 8 58 46 AM" src="https://user-images.githubusercontent.com/102629468/177369648-0495678b-dd69-49a2-b7ed-3f8c12134f9e.png">
+
+## Liveboard Considerations 
+
+Just as with other steps in implementation of this Starter Kit, many pinboard visualizations depend upon search tokens that are specific to the ThoughtSpot data set. This section will include a brief description of each Pinboard. It is up to the implementation team to reconstruct each Pinboard in alignment with each customer’s data set and requirements.
+
+
+#### Sales Leaderboard 
+
+The Sales Leaderboard is intended to serve as the standard Sales Leaderboard that is included in any Salesforce reporting tool. During the ThoughtSpot Salesforce demo it is used to show that “sure, we can do this, but our value lies in allowing non-technical users to search their Salesforce data.”
+
+<img width="1728" alt="salesforce_2" src="https://user-images.githubusercontent.com/102629468/177368707-46705be1-8377-403b-b3b7-ca8de28505ac.png">
+
+
+#### Global Team Performance
+
+This Pinboard is focused upon the successes and failures of all of the sales teams from around the world. There are some region-based visualizations, but the emphasis is the team (which is often defined by the team manager).  
+
+<img width="1728" alt="salesforce_1" src="https://user-images.githubusercontent.com/102629468/177368802-979f3b41-8f2c-46ff-92a0-96ac1485c2b4.png">
+
+
+#### Global Pipeline by Region
+
+This Pinboard is focused upon the successes and failures of each region. As noted in other parts of this guide, regions in the ThoughtSpot implementation are constructed as part of a join between Account BillingCountry and the REGIONREF table. The definition of a Region will depend upon the definition provided by the customer.
+
+<img width="1728" alt="salesforce_1" src="https://user-images.githubusercontent.com/102629468/177368683-6ee4b1ee-9e8a-4e62-82cc-8cbd13d0eea7.png">
 
 
 
