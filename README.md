@@ -1,7 +1,14 @@
 # TML Blocks - Salesforce
 
-This document is intended to serve as a guide for a technical resource to implement the ThoughtSpot Starter Kit for Salesforce on any ThoughtSpot instance. The data set must be stored in a Snowflake data warehouse and accessed via Embrace from the ThoughtSpot instance. Because every customer’s Salesforce data will likely be somewhat different, the Starter Kit must be adjusted to match their data/definitions and desired customer use cases.
+SpotApps are ThoughtSpot’s out-of-the-box solution templates built for specific use cases and data sources. They are built on ThoughtSpot Modeling Language (TML) Blocks, which are pre-built pieces of code that are easy to download and implement directly from the product.
 
+The Salesforce Pipeline Analysis SpotApp mimics the Salesforce data model. When you deploy it, ThoughtSpot creates several Worksheets, Answers, and Liveboards, based on your Salesforce data in your cloud data warehouse.
+
+Because every customer’s Salesforce data will likely be somewhat different, the Starter Kit must be adjusted to match their data/definitions and desired customer use cases
+
+# Artifacts 
+- **Salesforce Pipeline Analysis TML Blocks.zip**: TML template files for the SpotApp.
+- **Salesforce Pipeline Analysis_schema.csv**:The following table describes the schema for the Redshift Performance and Consumption SpotApp.
 
 ## Implementation Steps 
 
